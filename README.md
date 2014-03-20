@@ -4,7 +4,7 @@ Fork with
 -OpenCV 2.4.2
 -python 2.7
 
-In the skandal directory, open a terminal
+In the Skandal2.7-master directory, open a terminal
 
  ./scan
 
