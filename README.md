@@ -61,16 +61,8 @@ Je continuerai la liste si je reçois un Oscar python dans la catégorie Vétér
 Skandal is released under the GENERAL PUBLIC LICENSE Version 2, June 1991.
 See the bundled LICENSE file for details.
 
-<<<<<<< HEAD
 
 ## Bugs:
 * OpenCV Windows doesn't close with cv2.destroyAllWindows()
     but the terminal is active and working.
-=======
-
-## Bugs:
-* OpenCV Windows doesn't close with cv2.destroyAllWindows()
-    but the terminal is active and working.
-
->>>>>>> 6210b165a7d0b46666b8fda69ef46c90c045daef
 
