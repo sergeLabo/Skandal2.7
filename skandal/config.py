@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # config.py
@@ -62,6 +62,7 @@ def load_config(ini):
     # Angle in radians
     conf["ang_rd"] = conf["angle"] * np.pi / 180
 
+    print("Configuration from scan.ini loaded.\n")
     return conf
 
 def get_available_name(name):
@@ -83,11 +84,13 @@ def directory_management(name):
     ''' Create all needed directories if not. Return this directories.'''
     # TODO: what append if a creative guy change the name config.py
     Skandal = os.path.dirname(os.getcwd()+"config.py")
+    print("\n\nDirectories:\n")
     print("Master directory is {}".format(Skandal))
     # Working directory
     try:
         os.mkdir(Skandal + "/work")
     except:
+        print("Directory {0} exist".format(Skandal + "/work"))
         pass
     # Master directories
     all_dir = [ "/image",
@@ -99,6 +102,7 @@ def directory_management(name):
         try:
             os.mkdir(Skandal + "/work" + d)
         except:
+            print("Directory {0} exist".format(Skandal + "/work" + d))
             pass
 
     # Sub-directories
@@ -107,34 +111,33 @@ def directory_management(name):
         try:
             os.mkdir(sub_dir)
         except:
+            print("Directory {0} exist".format(sub_dir))
             pass
 
     img_dir = Skandal + "/work" + "/image/p_" + name
     txt_dir = Skandal + "/work" + "/txt/p_" + name
     ply_dir = Skandal + "/work" + "/ply"
+    print("\n\n\n  Directories for this work:\n")
+    print("image: {0}".format(img_dir))
+    print("txt: {0}".format(txt_dir))
+    print("ply: {0}\n".format(ply_dir))
 
     return img_dir, txt_dir ,ply_dir
 
 def save_config(section, key, value):
     '''Save config in *.ini file with section, key, value.'''
-    config = SafeConfigParser()
-    config.read("./scan.ini")
     if isinstance(value, int):
+        val = str(value)
+    if isinstance(value, float):
         val = str(value)
     if isinstance(value, str):
         val = '"' + value + '"'
+
+    config = SafeConfigParser()
+    config.read("./scan.ini")
     config.set(section, key, val)
     with open("./scan.ini", 'w') as f:
        config.write(f)
     f.close()
-
-
-if __name__=='__main__':
-    print(os.path.dirname(os.getcwd()+"config.py"))
-    print(os.getcwd()[:-8])
-    get_available_name('_rien01DFRE@')
-    conf = load_config("./scan.ini")
-    for key, value in list(conf.items()):
-        print((key, value))
-    print(conf["webcam"])
-    save_config(conf["webcam"], "brightness", 33)
+    print("\n{1} = {2} saved in scan.ini in section {0}\n".format(section,
+                                                                key, val))

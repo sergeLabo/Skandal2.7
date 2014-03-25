@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # process.py
@@ -378,5 +378,5 @@ def nothing(x):
 if __name__=='__main__':
     conf = load_config("./scan.ini")
     proc = Process(conf)
-    #proc.get_laser_line()
+    proc.get_laser_line()
     proc.get_PLY()

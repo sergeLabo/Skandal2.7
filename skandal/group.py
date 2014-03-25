@@ -1,4 +1,4 @@
-#! /usr/bin/env PYTHON
+#! /usr/bin/env PYTHON3
 # -*- coding: utf-8 -*-
 
 # group.py
