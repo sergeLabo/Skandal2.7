@@ -25,7 +25,10 @@
 import os
 import ast
 from ConfigParser import SafeConfigParser
+import subprocess
 import numpy as np
+import Xlib
+import Xlib.display
 
 def load_config(ini):
     ''' Read *.ini file. Create dict with all parameter.
@@ -49,11 +52,15 @@ def load_config(ini):
     conf["a_name"] = get_available_name(conf["name"])
 
     # Create directory
-    img_dir, txt_dir ,ply_dir = directory_management(conf["a_name"])
+    Skandal, img_dir, txt_dir ,ply_dir, stl_dir = \
+                                    directory_management(conf["a_name"])
     conf["img_dir"] = img_dir
     conf["txt_dir"] = txt_dir
     conf["ply_dir"] = ply_dir
     conf["plyFile"] = ply_dir + "/m_" + conf["a_name"] + ".ply"
+    conf["stl_dir"] = stl_dir
+    conf["stlFile"] = stl_dir + "/m_" + conf["a_name"] + ".stl"
+    conf["mlxFile"] = Skandal + "/skandal/skandal.mlx"
 
     # Get existing project list, id available image in image directory
     image_file = img_dir
@@ -61,6 +68,9 @@ def load_config(ini):
 
     # Angle in radians
     conf["ang_rd"] = conf["angle"] * np.pi / 180
+
+    # Screen size tuple
+    conf["screen_resolution"] = get_screen_size()
 
     print("Configuration from scan.ini loaded.\n")
     return conf
@@ -117,12 +127,14 @@ def directory_management(name):
     img_dir = Skandal + "/work" + "/image/p_" + name
     txt_dir = Skandal + "/work" + "/txt/p_" + name
     ply_dir = Skandal + "/work" + "/ply"
+    stl_dir = Skandal + "/work" + "/stl"
     print("\n\n\n  Directories for this work:\n")
     print("image: {0}".format(img_dir))
     print("txt: {0}".format(txt_dir))
     print("ply: {0}\n".format(ply_dir))
+    print("stl: {0}\n".format(stl_dir))
 
-    return img_dir, txt_dir ,ply_dir
+    return Skandal, img_dir, txt_dir ,ply_dir, stl_dir
 
 def save_config(section, key, value):
     '''Save config in *.ini file with section, key, value.'''
@@ -141,3 +153,15 @@ def save_config(section, key, value):
     f.close()
     print("\n{1} = {2} saved in scan.ini in section {0}\n".format(section,
                                                                 key, val))
+
+def get_screen_size():
+    # Get size screen
+    display = Xlib.display.Display()
+    root = display.screen().root
+    desktop = root.get_geometry()
+    print("Desktop resolution: {0} x {1}".format(desktop.width,
+                                                        desktop.height))
+    return desktop.width, desktop.height
+
+if __name__=='__main__':
+    conf = load_config("./scan.ini")

@@ -24,6 +24,8 @@
 
 
 import os, sys
+from threading import Thread
+import cv2
 from config import load_config, get_available_name, save_config
 from capture import Capture
 from process import Process
@@ -98,10 +100,22 @@ def menu_terminal():
                 choice = None
             if choice == 1:
                 skandal.set_cam_position()
+                img = cv2.imread('skandal.png', 0)
+                cv2.imshow('img', img)
+                cv2.waitKey(100)
+                cv2.destroyAllWindows()
             elif choice == 2:
                 skandal.shot()
+                img = cv2.imread('skandal.png', 0)
+                cv2.imshow('img', img)
+                cv2.waitKey(100)
+                cv2.destroyAllWindows()
             elif choice == 3:
                 skandal.process_images()
+                img = cv2.imread('skandal.png', 0)
+                cv2.imshow('img', img)
+                cv2.waitKey(100)
+                cv2.destroyAllWindows()
             elif choice == 4:
                 skandal.process_PLY()
             elif choice == 5:
@@ -111,6 +125,12 @@ def menu_terminal():
             else:
                 is_valid = False
                 print("Invalid number. Try again...")
+
+def skandal_image():
+    img = cv2.imread('skandal.png', 0)
+    cv2.imshow('img', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 def name_input():
     clear()
