@@ -64,6 +64,6 @@ See the bundled LICENSE file for details.
 
 
 ## Bugs:
-* OpenCV Windows doesn't close with cv2.destroyAllWindows()
-    but the terminal is active and working.
+* Often, OpenCV Windows doesn't close with cv2.destroyAllWindows()
+    so a small image is open to close the cam windows
 

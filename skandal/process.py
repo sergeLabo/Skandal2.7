@@ -53,6 +53,12 @@ class Process():
         self.ax = None
         self.sgray = None
 
+    def set_split_on(self):
+        self.split = True
+
+    def set_split_off(self):
+        self.split = False
+
     def get_laser_line(self):
         '''Get laser line  in all image,
         save founded points in txt file in txt directory.
@@ -159,6 +165,34 @@ class Process():
             mlx = self.cf["mlxFile"]
             open_in_meshlab(ply)
             #PLY_to_STL(ply, stl, mlx)
+            #save_binary(ply)
+            pass
+
+def save_binary(ply):
+    print("PLY file = {0}".format(ply))
+    myfile = open(ply, "wb")
+    fo = myfile.read()
+    myfile.write(fo)
+    myfile.close()
+
+def open_in_meshlab(ply):
+    ##try:
+        ##print("{0} open with meshlab".format(ply))
+        ##subprocess.call('meshlab {0}'.format(ply), shell=False)
+    ##except:
+        ##print("You must install meshlab,")
+        ##print("sudo apt-get install meshlab")
+    subprocess.call('meshlab {0}'.format(ply), shell=True)
+
+def PLY_to_STL(ply_in, stl_out, mlx):
+    ##try:
+    ##except:
+        ##print("Problem with meshlabserver")
+        ##print("You must install meshlab:")
+        ##print("    sudo apt-get install meshlab")
+    print("{0}\nconvert with\n{2}\nto \n{1}\n\n".format(ply_in, stl_out, mlx))
+    subprocess.call("meshlabserver -i {0} -o {1} -s {2} -om".format(\
+            ply_in, stl_out, mlx), shell = True)
 
 def lines_image(x_array, y_array, blackim):
     im = blackim.copy()
@@ -263,7 +297,7 @@ def compute_3D(cf, index, points_L, points_R, points):
 
         AM = width/2 - a_raw
 
-        if -300 < AM < 300: # Delete background laser line
+        if -400 < AM < 400: # Delete background laser line
             # Point position from turn table center
             OM = AM / sin_cam_ang
             FM = height - b_raw
@@ -299,7 +333,7 @@ def array_to_str(p_array):
 
 def write_ply(ply_file, points_str):
     '''points = list of string: "1 0 5\n" '''
-    file = open(ply_file,"w")
+    file = open(ply_file, "wb")
     file.write('''ply
 format ascii 1.0
 comment author: Skandal
@@ -383,32 +417,14 @@ def save_points(points, file_name):
 def nothing(x):
     pass
 
-def open_in_meshlab(ply):
-    try:
-        subprocess.call('meshlab {0}'.format(ply), shell=False)
-        print("{0} open with meshlab".format(ply))
-    except:
-        print("You must install meshlab,")
-        print("sudo apt-get install meshlab")
-
-def PLY_to_STL(ply_in, stl_out, mlx):
-    print("{0}\nconvert with\n{2}\nto \n{1}\n\n".format(ply_in, stl_out, mlx))
-    subprocess.call("meshlabserver -i {0} -o {1} -s {2} -om vc vn".format(\
-            ply_in, stl_out, mlx), shell = False)
-    ##try:
-    ##except:
-        ##print("Problem with meshlabserver")
-        ##print("You must install meshlab:")
-        ##print("    sudo apt-get install meshlab")
-
 
 if __name__=='__main__':
     conf = load_config("./scan.ini")
     proc = Process(conf)
-    proc.get_laser_line()
-    img = cv2.imread('skandal.png', 0)
-    cv2.imshow('img', img)
-    cv2.waitKey(100)
-    cv2.destroyAllWindows()
+    ##proc.get_laser_line()
+    ##img = cv2.imread('skandal.png', 0)
+    ##cv2.imshow('img', img)
+    ##cv2.waitKey(100)
+    ##cv2.destroyAllWindows()
     proc.get_PLY()
 

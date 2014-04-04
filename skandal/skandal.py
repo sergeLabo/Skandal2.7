@@ -51,7 +51,13 @@ class Skandal():
         self.proc.get_laser_line()
 
     def process_PLY(self):
+        self.proc.set_split_off()
         self.proc.get_PLY()
+
+    def control_PLY(self):
+        self.proc.set_split_on()
+        self.proc.get_PLY()
+        self.proc.set_split_off()
 
     def scan(self):
         self.shot()
@@ -64,6 +70,12 @@ def clear():
         c = os.system('cls')
     else:
         c = os.system('clear')
+
+def bug_opencv_hack():
+    img = cv2.imread('skandal.png', 0)
+    cv2.imshow('img', img)
+    cv2.waitKey(100)
+    cv2.destroyAllWindows()
 
 def menu_terminal():
     name = name_input()
@@ -82,9 +94,11 @@ def menu_terminal():
 
         3. Process Images to get laser line
 
-        4. Process PLY to get *.ply file
+        4. Get *.ply file
 
-        5. Scan
+        5. Get *.ply Control
+
+        6. Scan
 
         0. Exit
         """
@@ -100,37 +114,25 @@ def menu_terminal():
                 choice = None
             if choice == 1:
                 skandal.set_cam_position()
-                img = cv2.imread('skandal.png', 0)
-                cv2.imshow('img', img)
-                cv2.waitKey(100)
-                cv2.destroyAllWindows()
+                bug_opencv_hack()
             elif choice == 2:
                 skandal.shot()
-                img = cv2.imread('skandal.png', 0)
-                cv2.imshow('img', img)
-                cv2.waitKey(100)
-                cv2.destroyAllWindows()
+                bug_opencv_hack()
             elif choice == 3:
                 skandal.process_images()
-                img = cv2.imread('skandal.png', 0)
-                cv2.imshow('img', img)
-                cv2.waitKey(100)
-                cv2.destroyAllWindows()
+                bug_opencv_hack()
             elif choice == 4:
                 skandal.process_PLY()
             elif choice == 5:
+                skandal.control_PLY()
+                bug_opencv_hack()
+            elif choice == 6:
                 skandal.scan()
             elif choice == 0:
                 sys.exit(0)
             else:
                 is_valid = False
                 print("Invalid number. Try again...")
-
-def skandal_image():
-    img = cv2.imread('skandal.png', 0)
-    cv2.imshow('img', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
 
 def name_input():
     clear()

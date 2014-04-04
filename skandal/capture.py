@@ -47,7 +47,7 @@ class Capture():
 
     def set_cam_position(self):
         create_trackbar_gray()
-        # set = 0 br, 1 co, 2 sh, 3 fo, 4 sw, 5 ph, 6 pv, 7 mah, 8 mav, 9 rot
+        # set = 0 br, 1 co, 2 sa, 3 fo, 4 sw, 5 ph, 6 pv, 7 mah, 8 mav, 9 rot
         old_set = set_init_trackbar(self.cf)
 
         while True:
@@ -56,9 +56,9 @@ class Capture():
                 # Display original image
                 frame = display_raw(frame, self.width, self.height, self.cf)
                 # Display grayscale image
-                br, co, sh, fo, sw, ph, pv, mah, mav, rot = display_gray(frame,
+                br, co, sa, fo, sw, ph, pv, mah, mav, rot = display_gray(frame,
                                                     self.width, self.height)
-                new_set = br, co, sh, fo, sw, ph, pv, mah, mav, rot
+                new_set = br, co, sa, fo, sw, ph, pv, mah, mav, rot
                 # Apply change and update conf
                 self.cf = apply_conf_change(self.cf, old_set, new_set)
                 # Update laser
@@ -123,7 +123,7 @@ class Capture():
         self.capture.release()
 
 def apply_conf_change(cf, old_set, new_set):
-    # set = 0 br, 1 co, 2 sh, 3 fo, 4 sw, 5 ph, 6 pv, 7 mah, 8 mav, 9 rot
+    # set = 0 br, 1 co, 2 sa, 3 fo, 4 sw, 5 ph, 6 pv, 7 mah, 8 mav, 9 rot
     if old_set[0] != new_set[0]:
         cf["brightness"] = new_set[0]
         apply_cam_setting("Brightness", new_set[0])
@@ -133,9 +133,9 @@ def apply_conf_change(cf, old_set, new_set):
         apply_cam_setting("Contrast", new_set[1])
         save_config(cf["webcam"], "contrast", new_set[1])
     if old_set[2] != new_set[2]:
-        cf["sharpness"] = new_set[2]
-        apply_cam_setting("Sharpness", new_set[2])
-        save_config(cf["webcam"], "sharpness", new_set[2])
+        cf["saturation"] = new_set[2]
+        apply_cam_setting("Saturation", new_set[2])
+        save_config(cf["webcam"], "saturation", new_set[2])
     if old_set[3] != new_set[3]:
         cf["focus_abs"] = new_set[3]
         apply_cam_setting("Focus (absolute)", new_set[3])
@@ -161,7 +161,7 @@ def create_trackbar_gray():
     cv2.namedWindow("Gray Scale")
     cv2.createTrackbar("Brightness", "Gray Scale", 30, 255, nothing)
     cv2.createTrackbar("Contrast", "Gray Scale", 0, 10, nothing)
-    cv2.createTrackbar("Sharpness", "Gray Scale", 0, 50, nothing)
+    cv2.createTrackbar("Saturation", "Gray Scale", 0, 50, nothing)
     cv2.createTrackbar("Focus (absolute)", "Gray Scale", 0, 40, nothing)
     switch = '0: Left Laser \n1: Right laser'
     cv2.createTrackbar(switch, "Gray Scale", 0, 1, nothing)
@@ -184,14 +184,14 @@ def set_init_trackbar(cf):
     cv2.setTrackbarPos("Rotate", "Gray Scale", rot)
     br = cf["brightness"]
     co = cf["contrast"]
-    sh = cf["sharpness"]
+    sa = cf["saturation"]
     fo = cf["focus_abs"]
     sw = 0
     cv2.setTrackbarPos("Brightness", "Gray Scale", br)
     cv2.setTrackbarPos("Contrast", "Gray Scale", co)
-    cv2.setTrackbarPos("Sharpness", "Gray Scale", sh)
+    cv2.setTrackbarPos("Saturation", "Gray Scale", sa)
     cv2.setTrackbarPos("Focus (absolute)", "Gray Scale", fo)
-    return br, co, sh, fo, sw, ph, pv, mah, mav, rot
+    return br, co, sa, fo, sw, ph, pv, mah, mav, rot
 
 def im_size(cf):
     '''Coeff multiplicateur function of cam and screen size.
@@ -239,7 +239,7 @@ def display_gray(im, width, height):
     # get current positions of trackbars
     br = cv2.getTrackbarPos("Brightness", "Gray Scale")
     co = cv2.getTrackbarPos("Contrast", "Gray Scale")
-    sh = cv2.getTrackbarPos("Sharpness", "Gray Scale")
+    sa = cv2.getTrackbarPos("Saturation", "Gray Scale")
     fo = cv2.getTrackbarPos("Focus (absolute)", "Gray Scale")
     switch = '0: Left Laser \n1: Right laser'
     sw = cv2.getTrackbarPos(switch, "Gray Scale")
@@ -266,7 +266,7 @@ def display_gray(im, width, height):
     # Display
     cv2.imshow("Gray Scale", im)
 
-    return br, co, sh, fo, sw, ph, pv, mah, mav, rot
+    return br, co, sa, fo, sw, ph, pv, mah, mav, rot
 
 def take_shot(cf, top, t_shot, im, nb_shot, way, arduino):
     if time() - t_shot > cf["tempo"]:
