@@ -197,18 +197,9 @@ def im_size(cf):
     '''Coeff multiplicateur function of cam and screen size.
         TODO à compléter
     '''
-    # Screen resolution
-    scr_res = cf["screen_resolution"]
-    # Get cam size
-    cam_w = cf["width"]
-    cam_h = cf["height"]
-
     # Default value
     kx = 1
     ky = 1
-
-    if cam_h > scr_res[1] -25:
-        kx = ky = 0.5
     return kx, ky
 
 def display_raw(im, width, height, cf):

@@ -87,26 +87,18 @@ def menu_terminal():
         clear()
         print("Your project is {0}".format(conf["name"]))
         menu = """
-
         1. Set Camera Position
-                    Régler le scanner
-
+                Régler le scanner
         2. Shot
-                    Capturer 2 tours soit 400 images
-
+                Capturer 2 tours soit 400 images
         3. Process Images to get laser line
-                    Trouver les lignes laser dans les images
-
-
+                Trouver les lignes laser dans les images
         4. Get *.ply file
-                    Obtenir le fichier ply
-
+                Obtenir le fichier ply
         5. Get *.ply Control
-                    Obtenir le fichier ply avec les meshs gauche et droit
-
+                Obtenir le fichier ply avec les meshs gauche et droit
         6. Scan
-                    Faire toutes les étapes
-
+                Faire toutes les étapes
         0. Exit
         """
         print(("{0}".format(menu)))

@@ -27,8 +27,6 @@ import ast
 from ConfigParser import SafeConfigParser
 import subprocess
 import numpy as np
-import Xlib
-import Xlib.display
 
 def load_config(ini):
     ''' Read *.ini file. Create dict with all parameter.
@@ -68,9 +66,6 @@ def load_config(ini):
 
     # Angle in radians
     conf["ang_rd"] = float(conf["angle"] * np.pi) / 180
-
-    # Screen size tuple
-    conf["screen_resolution"] = get_screen_size()
 
     print("Configuration from scan.ini loaded.\n")
     return conf
@@ -154,14 +149,6 @@ def save_config(section, key, value):
     print("\n{1} = {2} saved in scan.ini in section {0}\n".format(section,
                                                                 key, val))
 
-def get_screen_size():
-    # Get size screen
-    display = Xlib.display.Display()
-    root = display.screen().root
-    desktop = root.get_geometry()
-    print("Desktop resolution: {0} x {1}".format(desktop.width,
-                                                        desktop.height))
-    return desktop.width, desktop.height
 
 if __name__=='__main__':
     conf = load_config("./scan.ini")
