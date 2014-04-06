@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # skandal.py
@@ -89,16 +89,23 @@ def menu_terminal():
         menu = """
 
         1. Set Camera Position
+                    Régler le scanner
 
         2. Shot
+                    Capturer 2 tours soit 400 images
 
         3. Process Images to get laser line
+                    Trouver les lignes laser dans les images
+
 
         4. Get *.ply file
+                    Obtenir le fichier ply
 
         5. Get *.ply Control
+                    Obtenir le fichier ply avec les meshs gauche et droit
 
         6. Scan
+                    Faire toutes les étapes
 
         0. Exit
         """
@@ -128,6 +135,7 @@ def menu_terminal():
                 bug_opencv_hack()
             elif choice == 6:
                 skandal.scan()
+                bug_opencv_hack()
             elif choice == 0:
                 sys.exit(0)
             else:

@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # config.py
@@ -67,7 +67,7 @@ def load_config(ini):
     conf["proj_list"] = get_project_list(image_file)
 
     # Angle in radians
-    conf["ang_rd"] = conf["angle"] * np.pi / 180
+    conf["ang_rd"] = float(conf["angle"] * np.pi) / 180
 
     # Screen size tuple
     conf["screen_resolution"] = get_screen_size()

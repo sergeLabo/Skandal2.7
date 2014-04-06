@@ -123,7 +123,7 @@ class Process():
             if self.double:
                 # Right frame 50 frame after
                 indexR = self.steps + decal + index
-                if indexR >= 2*self.steps:
+                if indexR >= 2 * self.steps:
                     indexR = indexR - self.steps
                 file_R = self.cf["txt_dir"] + "/t_" +  str(indexR) + ".txt"
                 # Erase first
@@ -232,7 +232,7 @@ def compute_3D(cf, index, points_L, points_R, points):
     See sheme at:
       points = nparray(3, points_number) = all 3D points previously calculated
       points_L and points_R = nparray(2, points_number) = points in frame
-      index = right frame number
+      index = left frame number
     Return new points array
     '''
 
@@ -248,7 +248,7 @@ def compute_3D(cf, index, points_L, points_R, points):
     z_scale = cf["z_scale"]
     # Angles
     step = cf["nb_img"]
-    angle_step = 2 * np.pi / step
+    angle_step = float(2 * np.pi) / step
     alpha = cf["ang_rd"]
     sin_cam_ang = np.sin(alpha)
     teta = angle_step * index
@@ -296,20 +296,22 @@ def compute_3D(cf, index, points_L, points_R, points):
         b_raw = points_LR[pt][1]
 
         AM = width/2 - a_raw
+        # Correction because of ????
+        AM = AM - float(AM * AM) / 2500.0
 
         if -400 < AM < 400: # Delete background laser line
             # Point position from turn table center
             OM = AM / sin_cam_ang
             FM = height - b_raw
             v = (height / 2) - b_raw
-            a0 = -2* tg_alpha / height
+            a0 = - 2 * tg_alpha / height
             tg_beta = a0 * v
             OG = FM + AM * tg_beta
 
             if mini < OG  < maxi:
                 # Changement de repère orthonormé
-                x = np.cos(alpha - teta) * OM * scale
-                y = np.sin(alpha - teta) * OM * scale
+                x = np.cos(teta) * OM * scale
+                y = np.sin(teta) * OM * scale
                 z = OG * scale * z_scale
 
                 # Add this point
@@ -333,7 +335,7 @@ def array_to_str(p_array):
 
 def write_ply(ply_file, points_str):
     '''points = list of string: "1 0 5\n" '''
-    file = open(ply_file, "wb")
+    file = open(ply_file, "w")
     file.write('''ply
 format ascii 1.0
 comment author: Skandal
