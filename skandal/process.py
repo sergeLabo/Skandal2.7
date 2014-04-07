@@ -259,7 +259,7 @@ def compute_3D(cf, index, points_L, points_R, points):
     mav = cf["motor_axis_v"]
     mah = cf["motor_axis_h"]
     # coté opposé, coté adjacent
-    co = mav - pv
+    co = mav - pv + cf["persp_cor"]
     ca = ph - mah
     # Alpha
     tg_alpha = 0.2 # default value
