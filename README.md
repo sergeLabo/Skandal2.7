@@ -14,13 +14,20 @@ In the Skandal2.7-master directory, open a terminal
 
 Press Esc key in active window to quit and get the terminal.
 
+## Unfinished
+You must set the device video number in skandal.ini:
+
+video = 0
+or
+video = 1
+
 ## Documentation
 On the Labomedia wiki
 http://wiki.labomedia.org/index.php/Cat%C3%A9gorie:Skandal
 
 
 ## Installation
-Tested on Linux Mint 15
+Tested on Linux Mint 15 and Fedora 20
 
 See:
 

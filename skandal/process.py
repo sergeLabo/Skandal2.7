@@ -365,7 +365,14 @@ def get_one_laser_line(cf, im_num):
     imgFile = cf["img_dir"] + "/s_" + str(im_num) + ".png"
     txtFile = cf["txt_dir"] + "/t_" + str(im_num) + ".txt"
 
-    img = cv2.imread(imgFile)
+    img = cv2.imread(imgFile, 0)
+
+    ### Left Right Correction
+    ##if im_num > 199:
+        ##decx = 0
+        ##decy = 0
+        ##img = translate(img, decx, decy)
+
     x, y = 0, 0
     if img != None:
         white_points, x , y = find_white_points_in_gray(cf, img)
@@ -380,6 +387,13 @@ def get_one_laser_line(cf, im_num):
 
     return x, y, no_image
 
+def translate(im, decx, decy):
+    # Translate
+    rows, cols = im.shape
+    M = np.float32([[1, 0, decx],[0, 1, decy]])
+    dst = cv2.warpAffine(im, M, (cols,rows))
+    return dst
+
 def find_white_points_in_gray(cf, im):
     # if black image, this default settings return one point at (0, 0)
     x_line = np.array([0.0])
@@ -388,7 +402,7 @@ def find_white_points_in_gray(cf, im):
     color = 255 - cf["gray_max"]
 
     #--------------- Don't forget: y origine up left -------------#
-    im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    #im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     # All pixels table: filled with 0 if black, 255 if white
     all_pixels_table = cv2.inRange(im, color, 255)
 
@@ -423,10 +437,10 @@ def nothing(x):
 if __name__=='__main__':
     conf = load_config("./scan.ini")
     proc = Process(conf)
-    ##proc.get_laser_line()
-    ##img = cv2.imread('skandal.png', 0)
-    ##cv2.imshow('img', img)
-    ##cv2.waitKey(100)
-    ##cv2.destroyAllWindows()
+    proc.get_laser_line()
+    img = cv2.imread('skandal.png', 0)
+    cv2.imshow('img', img)
+    cv2.waitKey(100)
+    cv2.destroyAllWindows()
     proc.get_PLY()
 
