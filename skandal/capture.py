@@ -371,5 +371,5 @@ def nothing(x):
 if __name__=='__main__':
     conf = load_config("./scan.ini")
     cap = Capture(conf)
-    #cap.set_cam_position()
-    cap.shot()
+    cap.set_cam_position()
+    #cap.shot()

@@ -24,7 +24,7 @@
 
 '''
 Fast finding pixel position with current color interval from:
-http://stackoverflow.com/questions/21147259/fast-finding-pixel-position-with-current-color-interval
+http://goo.gl/0mfdQ2
 '''
 
 
@@ -160,39 +160,10 @@ class Process():
         print(("Compute in {0} seconds\n".format(t_total)))
         print("\n\n  Good job, thank's\n\n")
         if points.shape[0] > 1:
-            ply = self.cf["plyFile"]
-            stl = self.cf["stlFile"]
-            mlx = self.cf["mlxFile"]
-            open_in_meshlab(ply)
-            #PLY_to_STL(ply, stl, mlx)
-            #save_binary(ply)
-            pass
-
-def save_binary(ply):
-    print("PLY file = {0}".format(ply))
-    myfile = open(ply, "wb")
-    fo = myfile.read()
-    myfile.write(fo)
-    myfile.close()
+            open_in_meshlab(self.cf["plyFile"])
 
 def open_in_meshlab(ply):
-    ##try:
-        ##print("{0} open with meshlab".format(ply))
-        ##subprocess.call('meshlab {0}'.format(ply), shell=False)
-    ##except:
-        ##print("You must install meshlab,")
-        ##print("sudo apt-get install meshlab")
     subprocess.call('meshlab {0}'.format(ply), shell=True)
-
-def PLY_to_STL(ply_in, stl_out, mlx):
-    ##try:
-    ##except:
-        ##print("Problem with meshlabserver")
-        ##print("You must install meshlab:")
-        ##print("    sudo apt-get install meshlab")
-    print("{0}\nconvert with\n{2}\nto \n{1}\n\n".format(ply_in, stl_out, mlx))
-    subprocess.call("meshlabserver -i {0} -o {1} -s {2} -om".format(\
-            ply_in, stl_out, mlx), shell = True)
 
 def lines_image(x_array, y_array, blackim):
     im = blackim.copy()
@@ -223,6 +194,22 @@ def display_laser_line(cf, im):
     cv2.imshow('Laser Line', im)
     return gray_max
 
+def get_perspective(cf):
+    # Perspective correction from middle axis and down
+    ph = cf["persp_h"]
+    pv = cf["persp_v"]
+    # Motor axis position
+    mav = cf["motor_axis_v"]
+    mah = cf["motor_axis_h"]
+    # coté opposé, coté adjacent
+    co = mav - pv + cf["persp_cor"]
+    ca = ph - mah
+    # Alpha
+    tg_alpha = 0.2 # default value
+    if float(ca) != 0.0: # No 0 div
+        tg_alpha = float(co) / float(ca)
+    return tg_alpha
+
 def compute_3D(cf, index, points_L, points_R, points):
     ''' Compute one frame:
     From 2D frame points coordinates left and right,
@@ -252,19 +239,7 @@ def compute_3D(cf, index, points_L, points_R, points):
     alpha = cf["ang_rd"]
     sin_cam_ang = np.sin(alpha)
     teta = angle_step * index
-    # Perspective correction from middle axis and down
-    ph = cf["persp_h"]
-    pv = cf["persp_v"]
-    # Motor axis position
-    mav = cf["motor_axis_v"]
-    mah = cf["motor_axis_h"]
-    # coté opposé, coté adjacent
-    co = mav - pv + cf["persp_cor"]
-    ca = ph - mah
-    # Alpha
-    tg_alpha = 0.2 # default value
-    if float(ca) != 0.0: # No 0 div
-        tg_alpha = float(co) / float(ca)
+    tg_alpha = get_perspective(cf)
     ############################
 
     # Create empty array to fill with frame points 3D coordinates
@@ -367,12 +342,6 @@ def get_one_laser_line(cf, im_num):
 
     img = cv2.imread(imgFile, 0)
 
-    ### Left Right Correction
-    ##if im_num > 199:
-        ##decx = 0
-        ##decy = 0
-        ##img = translate(img, decx, decy)
-
     x, y = 0, 0
     if img != None:
         white_points, x , y = find_white_points_in_gray(cf, img)
@@ -387,13 +356,6 @@ def get_one_laser_line(cf, im_num):
 
     return x, y, no_image
 
-def translate(im, decx, decy):
-    # Translate
-    rows, cols = im.shape
-    M = np.float32([[1, 0, decx],[0, 1, decy]])
-    dst = cv2.warpAffine(im, M, (cols,rows))
-    return dst
-
 def find_white_points_in_gray(cf, im):
     # if black image, this default settings return one point at (0, 0)
     x_line = np.array([0.0])
@@ -402,7 +364,6 @@ def find_white_points_in_gray(cf, im):
     color = 255 - cf["gray_max"]
 
     #--------------- Don't forget: y origine up left -------------#
-    #im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     # All pixels table: filled with 0 if black, 255 if white
     all_pixels_table = cv2.inRange(im, color, 255)
 
