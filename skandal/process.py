@@ -185,7 +185,7 @@ def create_trackbar_laser_line(cf):
     cv2.setTrackbarPos('Gray Max', 'Laser Line', gray_max)
 
 def display_laser_line(cf, im):
-    # get current positions of trackbars
+    # Get current positions of trackbars
     gray_max = cv2.getTrackbarPos('Gray Max', 'Laser Line')
     # TODO set k with width
     width = int(cf["width"]*0.8)
@@ -195,7 +195,7 @@ def display_laser_line(cf, im):
     return gray_max
 
 def get_perspective(cf):
-    # Perspective correction from middle axis and down
+    # Perspective correction
     ph = cf["persp_h"]
     pv = cf["persp_v"]
     # Motor axis position
@@ -267,16 +267,17 @@ def compute_3D(cf, index, points_L, points_R, points):
     # For all points (x, y) in txt file
     for pt in range(nb):
         # a_raw, b_raw = point coordinates in image with origine up, left
-        a_raw = points_LR[pt][0]
-        b_raw = points_LR[pt][1]
+        a_raw = points_new[pt][0]
+        b_raw = points_new[pt][1]
 
         AM = width/2 - a_raw
         # Correction because of ????
         AM = AM - float(AM * AM) / 2500.0
 
-        if -400 < AM < 400: # Delete background laser line
+        if -400 < AM < 400:  # Delete background laser line
             # Point position from turn table center
             OM = AM / sin_cam_ang
+            # Height
             FM = height - b_raw
             v = (height / 2) - b_raw
             a0 = - 2 * tg_alpha / height
@@ -310,8 +311,7 @@ def array_to_str(p_array):
 
 def write_ply(ply_file, points_str):
     '''points = list of string: "1 0 5\n" '''
-    file = open(ply_file, "w")
-    file.write('''ply
+    header = '''ply
 format ascii 1.0
 comment author: Skandal
 element vertex {0}
@@ -328,8 +328,9 @@ property uchar green
 property uchar blue
 end_header
 {1}
-'''.format(len(points_str), "".join(points_str)))
-
+'''
+    file = open(ply_file, "w")
+    file.write(header.format(len(points_str), "".join(points_str)))
     file.close()
     print(("\nSaved {0} points to:\n     {1}\n".format(len(points_str),
                                                             ply_file)))
@@ -344,7 +345,7 @@ def get_one_laser_line(cf, im_num):
 
     x, y = 0, 0
     if img != None:
-        white_points, x , y = find_white_points_in_gray(cf, img)
+        white_points, x, y = find_white_points_in_gray(cf, img)
         save_points(white_points, txtFile)
         tfinal = int(1000*(time() - tframe))
 
@@ -361,6 +362,7 @@ def find_white_points_in_gray(cf, im):
     x_line = np.array([0.0])
     y_line  = np.array([0.0])
     thickness = np.array([0.0])
+    # Points beetwin color and 255 are selected
     color = 255 - cf["gray_max"]
 
     #--------------- Don't forget: y origine up left -------------#
@@ -385,7 +387,6 @@ def find_white_points_in_gray(cf, im):
     # x and y array in one array
     points = np.transpose(np.vstack((x_line, y_line)))
 
-    # x_line, y_line only to plot
     return points, x_line, y_line
 
 def save_points(points, file_name):

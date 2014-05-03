@@ -94,7 +94,7 @@ class Capture():
                             if self.double:
                                 way = "right"
                             else:
-                                doloop = end_shot(way, self.arduino)
+                                break
                     if way == "right":
                         set_laser(way, self.arduino)
                         # Shot every second until shot number
@@ -119,8 +119,9 @@ class Capture():
     def close(self):
         if self.ard == 1:
             set_laser("off", self.arduino)
-        cv2.destroyAllWindows()
         self.capture.release()
+        cv2.destroyAllWindows()
+
 
 def apply_conf_change(cf, old_set, new_set):
     # set = 0 br, 1 co, 2 sh, 3 fo, 4 sw, 5 ph, 6 pv, 7 mah, 8 mav, 9 rot
@@ -194,8 +195,8 @@ def set_init_trackbar(cf):
     return br, co, sh, fo, sw, ph, pv, mah, mav, rot
 
 def im_size(cf):
-    '''Coeff multiplicateur function of cam and screen size.
-        TODO à compléter
+    '''Multiplicator with cam and screen size.
+        TODO
     '''
     # Default value
     kx = 1
@@ -248,7 +249,7 @@ def display_gray(im, width, height):
     else:
         k = 0.8
     W = int(width * k)
-    H = int(height * k * 0.5)
+    H = int(height * k * 0.5)  # To create places for trackbar
     im = cv2.resize(im, (W, H))
 
     # Convert
@@ -372,4 +373,4 @@ if __name__=='__main__':
     conf = load_config("./scan.ini")
     cap = Capture(conf)
     cap.set_cam_position()
-    #cap.shot()
+    cap.shot()
