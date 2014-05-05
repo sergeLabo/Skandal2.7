@@ -54,10 +54,10 @@ class Capture():
             ret, frame = self.capture.read()
             if ret:
                 # Display original image
-                frame = display_raw(frame, self.width, self.height, self.cf)
+                frame = display_raw(frame, self.cf)
                 # Display grayscale image
                 br, co, sh, fo, sw, ph, pv, mah, mav, rot = display_gray(frame,
-                                                    self.width, self.height)
+                                                                    self.cf)
                 new_set = br, co, sh, fo, sw, ph, pv, mah, mav, rot
                 # Apply change and update conf
                 self.cf = apply_conf_change(self.cf, old_set, new_set)
@@ -69,7 +69,7 @@ class Capture():
                 if key == 27:
                     break
             else:
-                print("Webcam is busy")
+                print("Webcam is busy\nor ")
         cv2.destroyAllWindows()
 
     def shot(self):
@@ -105,7 +105,7 @@ class Capture():
                             break
                                 # TODO: Bug if resize in display_raw
                 # Display
-                frame = display_raw(frame, self.width, self.height, self.cf)
+                frame = display_raw(frame, self.cf)
                 # wait for esc key to exit
                 key = np.int16(cv2.waitKey(33))
                 if key == 27:
@@ -203,10 +203,10 @@ def im_size(cf):
     ky = 1
     return kx, ky
 
-def display_raw(im, width, height, cf):
+def display_raw(im, cf):
     kx, ky = im_size(cf)
-    W = int(width * kx)
-    H = int(height * ky)
+    W = int(cf["width"] * kx)
+    H = int(cf["height"] * ky)
     im = cv2.resize(im, (W, H))
 
     # Rotate
@@ -220,14 +220,15 @@ def display_raw(im, width, height, cf):
     rotated = cv2.warpAffine(im, M, (w, h))
 
     # Add lines
-    rotated = add_lines(rotated, W, H, cf)
+    rotated = add_lines(rotated, cf)
 
     # Display
     cv2.imshow("Raw Webcam", rotated)
 
     return rotated
 
-def display_gray(im, width, height):
+def display_gray(im, cf):
+    width, height = cf["width"], cf["height"]
     # get current positions of trackbars
     br = cv2.getTrackbarPos("Brightness", "Gray Scale")
     co = cv2.getTrackbarPos("Contrast", "Gray Scale")
@@ -314,9 +315,9 @@ def init_arduino(cf):
     arduino.write('G')
     return arduino
 
-def add_lines(im, width, height, cf):
-    h = height
-    w = width
+def add_lines(im, cf):
+    h = cf["height"]
+    w = cf["width"]
     mav = cf["motor_axis_v"]
     mah = cf["motor_axis_h"]
     pv = cf["persp_v"]
