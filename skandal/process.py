@@ -81,7 +81,7 @@ class Process():
             self.y2 = self.cf["width"] - self.cf["cut_down"]
             self.w = self.x2 - self.x1
             self.h = self.y2 - self.y1
-        print("Croped image size = {0} x {1} \n from ({2}:{3} to {4}:{5}".\
+        print("Croped image size = {0} x {1} \n from {2}:{3} to {4}:{5}".\
                 format(self.w, self.h, self.x1, self.y1, self.x2, self.y2))
 
     def lines_image(self, x_array, y_array):
@@ -195,7 +195,7 @@ class Process():
         # Update perspective
         self.get_perspective()
         # Correspondence between left and right
-        decal = int(self.cf["ang_rd"] * self.cf["nb_img"] / np.pi)
+        decal = 100 + int(self.cf["ang_rd"] * self.cf["nb_img"] / np.pi)
 
         for index in range(self.cf["nb_img"]):
             # Left frame at index
@@ -214,7 +214,7 @@ class Process():
                 if indexR >= 2 * self.cf["nb_img"]:
                     indexR = indexR - self.cf["nb_img"]
                 file_R = self.cf["txt_dir"] + "/t_" +  str(indexR) + ".txt"
-                points_R, no_txt = load_points(file_L, self.cf["a_name"])
+                points_R, no_txt = load_points(file_R, self.cf["a_name"])
                 if no_txt:
                     break
 
@@ -225,16 +225,16 @@ class Process():
                                                                     indexR)))
                     points = self.compute_3D(self.cf, index, points_L,points_R,
                                                                     points)
-                if self.cf["split"]: # "split"=1 to get left and right meshes
-                    points = self.compute_3D(self.cf, index, points_L, p_empty,
-                                                                    points)
-                    # indexR only to calculated teta,
-                    # 1/4 of circumference before (with angle = 45°)
-                    points = self.compute_3D(self.cf, index, points_R, p_empty,
-                                                                    points)
+                else: # "split"=1 to get left and right meshes
+                    # Left
+                    points = self.compute_3D(self.cf,
+                        index, points_L, p_empty, points)
+                    # Right: indexR only to calculated teta
+                    points = self.compute_3D(self.cf,
+                        index + self.cf["nb_img"], points_R, p_empty, points)
 
             # If only left laser: double = 0
-            if not self.cf["double"]:
+            else:
                 points = self.compute_3D(self.cf, index, points_L, p_empty,
                                                                         points)
 
@@ -316,13 +316,16 @@ class Process():
         a0 = - 2 * self.persp / self.h
         tg_beta = a0 * v
         OG = FM + AM * tg_beta
-
-        # Changement de repère orthonormé
-        x = np.cos(teta) * OM * self.cf["scale"]
-        y = np.sin(teta) * OM * self.cf["scale"]
-        z = OG * self.cf["scale"] * self.cf["z_scale"]
-        # Add this point
-        frame_points = np.append(frame_points, [[x, y, z]], axis=0)
+        # Mesh Cleaning
+        mini = self.cf["mini"]
+        maxi = self.h - self.cf["maxi"]
+        if mini < OG < maxi:
+            # Changement de repère orthonormé
+            x = np.cos(teta) * OM * self.cf["scale"]
+            y = np.sin(teta) * OM * self.cf["scale"]
+            z = OG * self.cf["scale"] * self.cf["z_scale"]
+            # Add this point
+            frame_points = np.append(frame_points, [[x, y, z]], axis=0)
         return frame_points
 
 def load_points(file_X, project_name):
@@ -400,10 +403,10 @@ def save_points(points, file_name):
 if __name__=='__main__':
     conf = load_config("./scan.ini")
     proc = Process(conf)
-    proc.get_laser_line()
-    img = cv2.imread('skandal.png', 0)
-    cv2.imshow('img', img)
-    cv2.waitKey(100)
-    cv2.destroyAllWindows()
+    ##proc.get_laser_line()
+    ##img = cv2.imread('skandal.png', 0)
+    ##cv2.imshow('img', img)
+    ##cv2.waitKey(100)
+    ##cv2.destroyAllWindows()
     proc.get_PLY()
 

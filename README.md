@@ -66,3 +66,9 @@ See the bundled LICENSE file for details.
     so a small image is open to close the cam windows
 
 * The class Window open some unused window for the task.
+
+* In process.py, get_PLY(), line 198:
+    if right first: with 200 steps motor
+    decal = 100 + int(self.cf["ang_rd"] * self.cf["nb_img"] / np.pi)
+    if left first:
+    decal = int(self.cf["ang_rd"] * self.cf["nb_img"] / np.pi)

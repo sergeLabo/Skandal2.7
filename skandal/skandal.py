@@ -93,7 +93,7 @@ def menu_terminal():
         clear()
         print("Your project is {0}".format(conf["name"]))
         menu = """
-        1. Set Camera Position
+        1. Set Skandal
                 Régler le scanner
         2. Shot
                 Capturer 2 tours soit 400 images
