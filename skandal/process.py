@@ -195,7 +195,11 @@ class Process():
         # Update perspective
         self.get_perspective()
         # Correspondence between left and right
-        decal = 100 + int(self.cf["ang_rd"] * self.cf["nb_img"] / np.pi)
+        if self.cf["left_first"]:
+            d = 0
+        else:
+            d = int(self.cf["nb_img"] / 2)
+        decal = d + int(self.cf["ang_rd"] * self.cf["nb_img"] / np.pi)
 
         for index in range(self.cf["nb_img"]):
             # Left frame at index
