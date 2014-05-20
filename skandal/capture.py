@@ -216,5 +216,5 @@ def laser_L_or_R(arduino, sw_old, sw_new):
 if __name__=='__main__':
     conf = load_config("./scan.ini")
     cap = Capture(conf)
-    ##cap.set_cam_position()
-    cap.shot()
+    cap.set_cam_position()
+    #cap.shot()
