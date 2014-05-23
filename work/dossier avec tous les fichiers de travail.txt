@@ -1,0 +1,3 @@
+Le dossier work contient tous les fichiers de travail
+
+Work directory with all working files
