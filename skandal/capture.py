@@ -211,7 +211,7 @@ def laser_L_or_R(arduino, sw_old, sw_new):
         if sw_new == 1:
             # Right on
             arduino .write('D')
-            arduino .write('B')
+            arduino .write('G')
 
 if __name__=='__main__':
     conf = load_config("./scan.ini")
