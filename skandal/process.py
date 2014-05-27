@@ -25,25 +25,24 @@
 '''
 Fast finding pixel position with current color interval from:
 http://goo.gl/0mfdQ2
-
-TODO: Trackbar to set width and height cut.
 '''
 
 
-import os
 from time import time
 import subprocess
 import cv2
 import numpy as np
-from config import load_config, save_config
+from config import load_config
 from group import group
 from window import Window
 
 
-GRAYMAX =[("Gray Max", 255, "gray_max")]
+GRAYMAX = [("Gray Max", 255, "gray_max")]
+
 
 class Process():
     '''Compute frame and PLY.'''
+
     def __init__(self, cf):
         self.cf = cf
         self.persp = 0.2
@@ -56,9 +55,9 @@ class Process():
         self.get_croped_im_size()
         self.blackim = np.zeros((self.h, self.w, 3), np.uint8)
         self.graymaxWin = Window("Gray max", self.w, self.h, 0.6, GRAYMAX,
-                                                            self.cf, "scan")
+                                 self.cf, "scan")
         self.grayWin = Window("Gray image", self.w, self.h, 0.6, None,
-                                                            self.cf, "scan")
+                              self.cf, "scan")
 
     def set_split_on(self):
         self.cf["split"] = True
@@ -87,10 +86,10 @@ class Process():
             self.w = self.x2 - self.x1
             self.h = self.y2 - self.y1
         print("Croped image size = {0} x {1} \n from {2}:{3} to {4}:{5}".\
-                format(self.w, self.h, self.x1, self.y1, self.x2, self.y2))
+               format(self.w, self.h, self.x1, self.y1, self.x2, self.y2))
 
     def lines_image(self, x_array, y_array):
-        im = self.blackim.copy() # TODO what append if no copy
+        im = self.blackim.copy()
         for i in range(x_array.shape[0]):
             im.itemset(y_array[i], x_array[i], 1, 255)
             im.itemset(y_array[i], x_array[i], 2, 255)
@@ -102,18 +101,17 @@ class Process():
         imgFile = self.cf["img_dir"] + "/s_" + str(im_num) + ".png"
         txtFile = self.cf["txt_dir"] + "/t_" + str(im_num) + ".txt"
 
-        img = cv2.imread(imgFile, 0)
+        img = cv2.imread(imgFile, 0)  # if no image, return empty matrice
         x, y = 0, 0
-        if img != None:
+        if img != None:  # if img: --> bug
             imcrop = self.crop_image(img)
             self.grayWin.display(imcrop, self.cf)
             white_points, x, y = self.find_white_points_in_gray(imcrop)
             save_points(white_points, txtFile)
             tfinal = int(1000*(time() - tframe))
 
-            print(("Image {0}: {1} points founded in {2} milliseconds".\
-            format("/s_" + str(im_num) + ".png", white_points.shape[0],
-                                                                    tfinal)))
+            print(("Image {0}: {1} points founded in {2} milliseconds".format(\
+                "/s_" + str(im_num) + ".png", white_points.shape[0], tfinal)))
         else:
             print("No image in {0} project\n".format(self.cf["a_name"]))
             no_image = True
@@ -122,7 +120,7 @@ class Process():
     def find_white_points_in_gray(self, im):
         # if black image, this default settings return one point at (0, 0)
         x_line = np.array([0.0])
-        y_line  = np.array([0.0])
+        y_line = np.array([0.0])
         thickness = np.array([0.0])
         # Points beetwin color and 255 are selected
         color = 255 - self.cf["gray_max"]
@@ -214,7 +212,7 @@ class Process():
         self.gap = d + int(self.cf["ang_rd"] * self.cf["nb_img"] / np.pi)
 
     def get_points_in_txt(self, index):
-        file_txt = self.cf["txt_dir"] + "/t_" +  str(index) + ".txt"
+        file_txt = self.cf["txt_dir"] + "/t_" + str(index) + ".txt"
         points_LorR, no_txt = load_points(file_txt, self.cf["a_name"])
         if no_txt:
             print("You must process image before process PLY")
@@ -235,7 +233,8 @@ class Process():
         for index in range(self.cf["nb_img"]):
             # Left frame at index
             points_L, no_txt = self.get_points_in_txt(index)
-            if no_txt: break
+            if no_txt:
+                break
 
             # Laser left and right: double = 1
             if self.cf["double"]:
@@ -244,15 +243,16 @@ class Process():
                 if indexR >= 2 * self.cf["nb_img"]:
                     indexR = indexR - self.cf["nb_img"]
                 points_R, no_txt = self.get_points_in_txt(indexR)
-                if no_txt: break
+                if no_txt:
+                    break
 
                 # Compute the two frames
-                if not self.cf["split"]: # split = 0
+                if not self.cf["split"]:  # split = 0
                     # Indexes must match to concatenate the two matching images
                     print(("Concatenate frame {0} and {1}".format(index,
                                                                     indexR)))
                     self.compute_3D(index, points_L, points_R)
-                else: # split = 1 to get left and right meshes
+                else:  # split = 1 to get left and right meshes
                     # Left
                     frame_pts = self.compute_3D(index, points_L, self.p_empty)
                     mesh_L = np.append(mesh_L, frame_pts, axis=0)
@@ -277,20 +277,20 @@ class Process():
         if self.cf["test"]:
             co += 0
             print(co, ca)
-        self.persp = 0.2 # default value
-        if float(ca) != 0.0: # No 0 div
+        self.persp = 0.2  # default value
+        if float(ca) != 0.0:  # No 0 div
             self.persp = float(co) / float(ca)
 
     def compute_3D(self, index, p_L, p_R):
-        ''' Compute one frame:
+        ''' Compute one frame://\
         From 2D frame points coordinates left and right,
             - add left and right
             - get average
             - compute x y z of this point
-        See sheme at:
-          points=nparray(3, points_number)=all 3D points previously calculated
-          points_L and points_R = nparray(2, points_number) = points in frame
-          index = left frame number
+
+        points=nparray(3, points_number)=all 3D points previously calculated
+        points_L and points_R = nparray(2, points_number) = points in frame
+        index = left frame number//
         Return new points array
         '''
 
@@ -362,6 +362,7 @@ class Process():
             frame_points = np.append(frame_points, [[x, y, z]], axis=0)
         return frame_points
 
+
 def load_points(file_X, project_name):
     try:
         points = np.loadtxt(file_X)
@@ -373,7 +374,12 @@ def load_points(file_X, project_name):
     return points, no_txt
 
 def open_in_meshlab(ply):
-    subprocess.call('meshlab {0}'.format(ply), shell=True)
+    '''http://sourceforge.net/p/meshlab/bugs/238/
+    problème de locale:
+    meshlab ne prend pas les "," comme des "."
+    LANG=C ouvre en anglais
+    '''
+    subprocess.call('LANG=C;meshlab {0}'.format(ply), shell=True)
 
 def concatenate_and_group(points_L, points_R):
     # If only one point, shape=(2,) not (1, 2)
@@ -396,11 +402,10 @@ def concatenate_and_group(points_L, points_R):
 
 def array_to_str(p_array):
     ''' From array(a lot x 3) return a string to create ply. '''
-    n = p_array.shape[0]
     list_of_str = p_array.tolist()
     p_str = []
     for s in list_of_str:
-        point = str(s[0]) + " " + str(s[1]) + " " + str(s[2]) +"\n"
+        point = str(s[0]) + " " + str(s[1]) + " " + str(s[2]) + "\n"
         p_str.append(point)
     return p_str
 
@@ -434,13 +439,12 @@ def save_points(points, file_name):
     np.savetxt(file_name, points, fmt="%i", delimiter=' ')
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     conf = load_config("./scan.ini")
     proc = Process(conf)
-    ##proc.get_laser_line()
-    ##img = cv2.imread('skandal.png', 0)
-    ##cv2.imshow('img', img)
-    ##cv2.waitKey(100)
-    ##cv2.destroyAllWindows()
+    proc.get_laser_line()
+    img = cv2.imread('skandal.png', 0)
+    cv2.imshow('img', img)
+    cv2.waitKey(100)
+    cv2.destroyAllWindows()
     proc.get_PLY()
-

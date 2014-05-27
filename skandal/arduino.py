@@ -60,7 +60,7 @@ class Arduino():
             print("Arduino closed")
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     conf = load_config("./scan.ini")
     device = conf["ard_dev"]
     arduino = Arduino(device)

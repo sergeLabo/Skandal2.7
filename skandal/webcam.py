@@ -44,6 +44,7 @@ CAM_PARAM = [["Focus, Auto", "focus_auto"],
             ["Zoom, Absolute", "zoom_abs"]]
 
 def apply_all_cam_settings(cf):
+    '''Apply all settings on cam.'''
     # Device number = str !
     cam = cf["cam"]
     # List of all cam settings, disable auto settings first
@@ -60,7 +61,7 @@ def apply_cam_setting(cam, name, value):
                                                 name, value), shell=True)
     print("Cam{0} settings: {1} = {2}".format(cam, name, value))
 
-if __name__=='__main__':
+if __name__ == '__main__':
     cf = load_config("./scan.ini")
     apply_all_cam_settings(cf)
     apply_cam_setting(0, "Brightness", 33)
