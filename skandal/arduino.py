@@ -49,8 +49,8 @@ class Arduino():
             if char in ['H', 'L', 'G', 'D', 'C', 'B']:
                 self.arduino.write(str(char).encode())
             else:
-                print(("{0} isn't in list of available characters".format(\
-                                                                    char)))
+                print(("{0} isn't in list of available characters".format(
+                      char)))
         else:
             print("Test without arduino card")
 

@@ -34,7 +34,7 @@ from arduino import Arduino
 
 COLOR = [("Brightness", 255, "brightness"),
         ("Saturation", 255, "saturation"),
-        ("White Balance Temperature", 10000, "white_bal_temp"),
+        ("Contrast", 10, "contrast"),
         ("Focus (absolute)", 40, "focus_abs")]
 
 GEOM = [("Laser Left Right", 1, "laser"),
@@ -157,7 +157,7 @@ class Capture():
                     break
             else:
                 print("Webcam is busy")
-        print("\n{0} good shot in {1} seconds".format(\
+        print("\n{0} good shot in {1} seconds".format(
                 nb_shot, int(time() - top)))
         cv2.destroyAllWindows()
 
@@ -220,4 +220,4 @@ if __name__ == '__main__':
     conf = load_config("./scan.ini")
     cap = Capture(conf)
     cap.set_cam_position()
-    cap.shot()
+    #cap.shot()

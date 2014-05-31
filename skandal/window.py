@@ -153,7 +153,7 @@ if __name__ == '__main__':
     name = "Test"
     COLOR = [("Brightness", 255, "brightness"),
             ("Saturation", 255, "saturation"),
-            ("White Balance Temperature", 10000, "white_bal_temp"),
+            ("Backlight Compensation", 10, "backlight_comp"),
             ("Focus (absolute)", 40, "focus_abs")]
     win1 = Window(name, 720, 1280, 0.5, COLOR, conf, conf["webcam"])
 

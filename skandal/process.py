@@ -110,7 +110,7 @@ class Process():
             save_points(white_points, txtFile)
             tfinal = int(1000*(time() - tframe))
 
-            print(("Image {0}: {1} points founded in {2} milliseconds".format(\
+            print(("Image {0}: {1} points founded in {2} milliseconds".format(
                 "/s_" + str(im_num) + ".png", white_points.shape[0], tfinal)))
         else:
             print("No image in {0} project\n".format(self.cf["a_name"]))
@@ -276,7 +276,6 @@ class Process():
         ca = self.cf["persp_h"] - self.cf["motor_axis_h"]
         if self.cf["test"]:
             co += 0
-            print(co, ca)
         self.persp = 0.2  # default value
         if float(ca) != 0.0:  # No 0 div
             self.persp = float(co) / float(ca)
@@ -332,7 +331,7 @@ class Process():
 
         # Bidouille intuitive
         # Correction because cube face are curved
-        AM = AM - float(AM * AM) / 2500.0
+        AM = AM - float(AM * AM) / 1720.0
 
         # Point position from turn table center
         OM = AM / sin_cam_ang
@@ -442,9 +441,9 @@ def save_points(points, file_name):
 if __name__ == '__main__':
     conf = load_config("./scan.ini")
     proc = Process(conf)
-    proc.get_laser_line()
-    img = cv2.imread('skandal.png', 0)
-    cv2.imshow('img', img)
-    cv2.waitKey(100)
-    cv2.destroyAllWindows()
+    ##proc.get_laser_line()
+    ##img = cv2.imread('skandal.png', 0)
+    ##cv2.imshow('img', img)
+    ##cv2.waitKey(100)
+    ##cv2.destroyAllWindows()
     proc.get_PLY()

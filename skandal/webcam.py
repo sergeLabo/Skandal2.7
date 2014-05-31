@@ -50,7 +50,7 @@ def apply_all_cam_settings(cf):
     # List of all cam settings, disable auto settings first
     # An item is a tuple, ("uvcdynctrl parameter name", "variable in scan.ini")
     for item in CAM_PARAM:
-        subprocess.call('uvcdynctrl -d video"{0}" -s  "{1}" {2}'.format(\
+        subprocess.call('uvcdynctrl -d video"{0}" -s  "{1}" {2}'.format(
                             cam, item[0], cf[item[1]]), shell=True)
         print("Cam{0} settings: {1} = {2}".format(cam, item[0], cf[item[1]]))
         sleep(0.1)
